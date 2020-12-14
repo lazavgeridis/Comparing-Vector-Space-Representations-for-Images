@@ -8,8 +8,20 @@ search, clustering, and classification.
 
 # Description
 
-We start off by loading a pretrained autoencoder model (Part 2), and basically converting each image (28x28 pixels) to a 10d latent space 
+### Extracting Latent Space Representations
+
+We start off by loading a pretrained autoencoder model (Part 2), and basically converting each image (28x28 pixels) to a 10D latent space 
 representation, as show below:
 
 ![Screenshot](images/ae_reduce.png)
+
+### NN Search in the 2 Vector Spaces
+
+
+### Earth Mover's Distance
+
+
+### Clustering in the 2 Vector Spaces
+
+
 
