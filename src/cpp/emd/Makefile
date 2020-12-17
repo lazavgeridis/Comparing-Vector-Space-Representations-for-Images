@@ -1,4 +1,4 @@
-SRCDIR := ../common
+SRCDIR := ../cpp/common
 HEADERDIR := ../../include
 OBJDIR := ../../obj
 
@@ -7,10 +7,11 @@ CFLAGS := -std=c++11 -Ofast -g3 -Wall -Wextra -I$(HEADERDIR)
 
 #-Ofast
 
-BINARY := cube
+BINARY := search
 
 SOURCES := $(shell find $(SRCDIR) -name '*.cpp')
-SOURCES += cube_app.cpp
+SOURCES += search_emd.cpp
+SOURCES += emd_utils.cpp
 
 OBJECTS := $(patsubst $(SRCDIR)/%.cpp, $(OBJDIR)/%.o, $(SOURCES))
 

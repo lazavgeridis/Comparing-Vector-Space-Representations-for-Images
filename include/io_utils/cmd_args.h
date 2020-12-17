@@ -67,6 +67,25 @@ class Cube_args: public Prog_args
 };
 
 
+class Prj3_args
+{
+    private:
+        const std::string trainset_original_path;
+        const std::string queryset_original_path;
+        const std::string train_labels_path;
+        const std::string query_labels_path;
+        const std::string output_file_path;
+
+    public:
+        Prj3_args(const std::string &, const std::string &, const std::string &, const std::string &, const std::string &);
+        std::string get_trainset_original_path() const;
+        std::string get_queryset_original_path() const;
+        std::string get_train_labels_path() const;
+        std::string get_query_labels_path() const;
+        std::string get_output_file_path() const;
+};
+
+
 inline Prog_args::Prog_args::Prog_args(const std::string &ipath, const std::string &qpath, const std::string &opath, \
                                         uint16_t nn_num, float rad) : \
                                         input_file_path(ipath), query_file_path(qpath), output_file_path(opath), \
@@ -180,5 +199,49 @@ inline uint16_t Cube_args::get_max_probes() const
 {
     return max_probes;
 }
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+inline Prj3_args::Prj3_args(const std::string &train_file, const std::string &query_file, \
+                            const std::string &train_labels, const std::string &query_labels, \
+                            const std::string &output_file) : \
+                                                trainset_original_path(train_file), \
+                                                queryset_original_path(query_file), \
+                                                train_labels_path(train_labels), \
+                                                query_labels_path(query_labels), \
+                                                output_file_path(output_file)
+{}
+
+
+inline std::string Prj3_args::get_trainset_original_path() const
+{
+    return trainset_original_path;
+}
+
+
+inline std::string Prj3_args::get_queryset_original_path() const
+{
+    return queryset_original_path;
+}
+
+
+inline std::string Prj3_args::get_train_labels_path() const
+{
+    return train_labels_path;
+}
+
+
+inline std::string Prj3_args::get_query_labels_path() const
+{
+    return query_labels_path;
+}
+
+
+inline std::string Prj3_args::get_output_file_path() const
+{
+    return output_file_path;
+}
+        
 
 #endif

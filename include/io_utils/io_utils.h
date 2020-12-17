@@ -20,9 +20,13 @@ void lsh_parse_args(int, char * const [], Lsh_args **);
 
 void cube_parse_args(int, char * const [], Cube_args **);
 
+void emd_parse_args(int, char * const [], Prj3_args **);
+
 void lsh_usage(const char *);
 
 void cube_usage(const char *);
+
+void emd_usage(const char *);
 
 void user_interface(Cube_args **);
 
@@ -43,26 +47,26 @@ void write_output(const std::string &, const uint16_t , const size_t , \
 
 
 template <typename T>
-void read_file(const std::string& filepath, std::vector<std::vector<T>> &data) {
+void read_dataset(const std::string& filepath, std::vector<std::vector<T>> &data) {
     std::ifstream data_file;
     data_file.open(filepath, std::ios::in | std::ios::binary);
 
     if(data_file) {
         uint32_t magic_num, images_number, rows, cols;
 
-        // read magic number
+        /* read magic number */
         data_file.read( (char *) &magic_num, sizeof(magic_num) );
         magic_num = bigend_to_littlend(magic_num);
 
-        // read number of images
+        /* read number of images */
         data_file.read( (char *) &images_number, sizeof(images_number) );
         images_number = bigend_to_littlend(images_number);
 
-        // read number of rows
+        /* read number of rows */
         data_file.read( (char *) &rows, sizeof(rows) );
         rows = bigend_to_littlend(rows);
 
-        // read number of columns
+        /* read number of columns */
         data_file.read( (char *) &cols, sizeof(cols) );
         cols = bigend_to_littlend(cols);
 
@@ -81,7 +85,37 @@ void read_file(const std::string& filepath, std::vector<std::vector<T>> &data) {
         data_file.close();
     }
     else {
-        std::cerr << "Could not open the file!" << std::endl;
+        std::cerr << "Could not open the dataset file!" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+}
+
+
+template <typename T>
+void read_labels(const std::string& filepath, std::vector<T> &data) {
+    std::ifstream data_file;
+    data_file.open(filepath, std::ios::in | std::ios::binary);
+
+    if(data_file) {
+        uint32_t magic_num, labels_number;
+
+        /* read magic number */
+        data_file.read( (char *) &magic_num, sizeof(magic_num) );
+        magic_num = bigend_to_littlend(magic_num);
+
+        /* read number of labels */
+        data_file.read( (char *) &labels_number, sizeof(labels_number) );
+        labels_number = bigend_to_littlend(labels_number);
+
+        data.resize(labels_number, 0);
+        for(size_t i = 0; i != labels_number; ++i) {
+            data_file.read( (char *) &data[i], sizeof(data[i]) );
+        }
+
+        data_file.close();
+    }
+    else {
+        std::cerr << "Could not open the labels file!" << std::endl;
         exit(EXIT_FAILURE);
     }
 }
