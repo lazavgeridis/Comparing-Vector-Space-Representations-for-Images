@@ -7,7 +7,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-#include "../../include/io_utils/cmd_args.h"
+#include "../../../include/io_utils/cmd_args.h"
 
 
 void lsh_usage(const char *exec) {
