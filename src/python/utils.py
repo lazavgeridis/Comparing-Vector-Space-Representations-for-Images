@@ -18,6 +18,23 @@ def dataset_reader(path):
     return (data, size, rows, cols)
 
 
+def write_output_data(dataset_output, dataset_pixels):
+    # normalize pixel values from 0 to 25500
+    for i in range(len(dataset_pixels)):
+        img = dataset_pixels[i]
+        dataset_pixels[i] = ((img - img.min()) * (1 / (img.max() - img.min()) * 25500)).astype('uint16')
+        
+    magicn = 3301
+    with open('../../output_files/'+dataset_output, 'wb') as f:
+        f.write(struct.pack('>I', magicn))
+        f.write(struct.pack('>I', len(dataset_pixels)))
+        f.write(struct.pack('>I', 1))
+        f.write(struct.pack('>I', len(dataset_pixels[0])))
+        for img in dataset_pixels:
+            for pixel in img:
+                f.write(struct.pack('>H', int(pixel)))
+
+
 # assuming MNIST labels file format (big endian)
 def labels_reader(path):
     f = open(path, 'rb')
@@ -37,12 +54,6 @@ def ask_for_hyperparameters():
     latent_dim = int(input("> Enter the latent dimension: "))
     epochs = int(input("> Enter training epochs: "))
     batch_size = int(input("> Enter training batch size: "))
-    # n_convs = int(input("> Enter the number of convolutional layers: "))
-    # convs = []
-    # for i in range(n_convs):
-    #     filts = int(input("> Enter the number of filters for convolutional layer {}: ".format(i+1)))
-    #     size = int(input("> Enter the filter size for convolutional layer {}: ".format(i+1)))
-    #     convs.append((filts, size))
     
     return (latent_dim, epochs, batch_size)
 
