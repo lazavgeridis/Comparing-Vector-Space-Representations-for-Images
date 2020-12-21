@@ -34,16 +34,17 @@ def die(error_message, error_code):
 
 
 def ask_for_hyperparameters():
+    latent_dim = int(input("> Enter the latent dimension: "))
     epochs = int(input("> Enter training epochs: "))
     batch_size = int(input("> Enter training batch size: "))
-    n_convs = int(input("> Enter the number of convolutional layers: "))
-    convs = []
-    for i in range(n_convs):
-        filts = int(input("> Enter the number of filters for convolutional layer {}: ".format(i+1)))
-        size = int(input("> Enter the filter size for convolutional layer {}: ".format(i+1)))
-        convs.append((filts, size))
+    # n_convs = int(input("> Enter the number of convolutional layers: "))
+    # convs = []
+    # for i in range(n_convs):
+    #     filts = int(input("> Enter the number of filters for convolutional layer {}: ".format(i+1)))
+    #     size = int(input("> Enter the filter size for convolutional layer {}: ".format(i+1)))
+    #     convs.append((filts, size))
     
-    return (epochs, batch_size, convs)
+    return (latent_dim, epochs, batch_size)
 
 
 def classification_parseargs():
