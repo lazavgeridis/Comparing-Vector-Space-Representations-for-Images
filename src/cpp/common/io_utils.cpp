@@ -476,3 +476,35 @@ void write_output(const std::string &out, const uint16_t nns, const size_t size,
     }
     ofile.close();
 }
+
+
+void write_search_output(const std::string &output, const size_t size, \
+                            const std::vector<std::vector<std::pair<uint32_t, size_t>>> &ann_dists, \
+                            const std::vector<std::pair<uint32_t, size_t>> &exact_dists, \
+                            const std::vector<std::pair<uint32_t, size_t>> &exact_dists_reduced, \
+                            const std::vector<std::chrono::microseconds> &times) {
+
+                                           
+    std::ofstream ofile;
+    ofile.open(output, std::ios::out | std::ios::trunc);
+
+    for (size_t i = 0; i != size; ++i) {
+        ofile << "Query: " << i << std::endl;
+       
+        ofile << "Nearest neighbor Reduced: " << exact_dists_reduced[i].second << std::endl;
+        ofile << "Nearest neighbor LSH: " << ann_dists[i][0].second << std::endl;
+        ofile << "Nearest neighbor True: " << exact_dists[i].second << std::endl;
+       
+        ofile << "distanceReduced: " << exact_dists_reduced[i].first << std::endl;
+        ofile << "distanceLSH: " << ann_dists[i][0].first << std::endl;
+        ofile << "distanceTrue: " << exact_dists[i].first << std::endl;
+    }  
+
+    ofile << "\n\ntReduced: " << (double) times[0].count() << std::endl;
+    ofile << "tLSH: " << (double) times[1].count() << std::endl;
+    ofile << "tTrue: " << (double) times[2].count() << std::endl;
+    ofile << std::endl;
+
+    ofile.close();
+
+}

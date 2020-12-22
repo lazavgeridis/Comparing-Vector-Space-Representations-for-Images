@@ -41,22 +41,20 @@ static void start_search_simulation(search_cmd_args *args) {
     std::cout << "..." << std::endl;
 
     /********** Start ANN / ENN / Range search **********/
-    std::vector<std::vector<std::pair<uint32_t, size_t>>>  ann_results(queryset_initial.size(), \
+    std::vector<std::vector<std::pair<uint32_t, size_t>>>   ann_results(queryset_initial.size(), \
                                                                 std::vector<std::pair<uint32_t, size_t>> (N));
 
-    std::vector<std::vector<uint32_t>>                     enn_distances(queryset_initial.size(), \
-                                                                std::vector<uint32_t> (N));
+    std::vector<std::pair<uint32_t, size_t>>                enn_distances(queryset_initial.size());
                                                                 
-    std::vector<std::vector<uint32_t>>                     enn_reduced_distances(queryset_reduced.size(), \
-                                                                std::vector<uint32_t> (N));
+    std::vector<std::pair<uint32_t, size_t>>                enn_reduced_distances(queryset_reduced.size());
 
-    std::vector<std::chrono::microseconds>                 search_times(3);
+    std::vector<std::chrono::microseconds>                  search_times(3);
 
 
     /* Exact NN calculation in reduced space */
     start = std::chrono::high_resolution_clock::now();
     for (size_t i = 0; i != queryset_reduced.size(); ++i) {
-        enn_reduced_distances[i] = exact_nn<uint16_t> (dataset_reduced, queryset_reduced[i], N);
+        enn_reduced_distances[i] = search_exact_nn<uint16_t> (dataset_reduced, queryset_reduced[i]);
     }
     stop = std::chrono::high_resolution_clock::now();
     auto dur = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
@@ -76,7 +74,7 @@ static void start_search_simulation(search_cmd_args *args) {
     /* Exact NN calculation */
     start = std::chrono::high_resolution_clock::now();
     for (size_t i = 0; i != queryset_initial.size(); ++i) {
-        enn_distances[i] = exact_nn<uint8_t> (dataset_initial, queryset_initial[i], N);
+        enn_distances[i] = search_exact_nn<uint8_t> (dataset_initial, queryset_initial[i]);
     }
     stop = std::chrono::high_resolution_clock::now();
     dur = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
@@ -84,7 +82,8 @@ static void start_search_simulation(search_cmd_args *args) {
     
 
     std::cout << "\nWriting formatted output to \"" << args->output_file << "\"..."<< std::endl;
-    // write_search_output();
+    write_search_output(args->output_file, queryset_initial.size(), \
+                            ann_results, enn_distances, enn_reduced_distances, search_times);
     std::cout << "Done!" << std::endl;
 
 }

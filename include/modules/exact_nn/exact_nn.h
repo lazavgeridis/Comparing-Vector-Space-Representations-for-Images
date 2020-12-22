@@ -9,26 +9,24 @@
 
 
 template<typename T>
-std::vector<uint32_t> exact_nn(const std::vector<std::vector<T>> &dataset, \
-                                                  const std::vector<T> &query, uint16_t nns) {
+std::pair<uint32_t, size_t> search_exact_nn(const std::vector<std::vector<T>> &dataset, \
+                                                  const std::vector<T> &query) {
 
-    std::vector<uint32_t> closest_distances(nns); 
-
-    for (size_t i = 0; i != nns; ++i) {
-        closest_distances[i] = std::numeric_limits<uint32_t>::max();
-    }
+    std::pair<uint32_t, size_t> res;
+    res.first = std::numeric_limits<uint32_t>::max();
+    res.second = 0;
 
     for (size_t i = 0; i != dataset.size(); ++i) {
         uint32_t dist = manhattan_distance_rd<T> (dataset[i], query);
-        if (dist < closest_distances[0]) {
-            closest_distances[0] = dist;
-            std::sort(closest_distances.begin(), closest_distances.end(), [](const uint32_t &left, const uint32_t &right) \
-                                                                             { return (left > right); } );
+        if (dist < res.first) {
+            res.first = dist;
+            res.second = i;
+            /*std::sort(closest_distances.begin(), closest_distances.end(), [](const uint32_t &left, const uint32_t &right) \
+                                                                             { return (left > right); } ); */
         }
     }
-    std::sort(closest_distances.begin(), closest_distances.end());
-
-    return closest_distances;
+    // std::sort(closest_distances.begin(), closest_distances.end());
+    return res;
 }
 
 

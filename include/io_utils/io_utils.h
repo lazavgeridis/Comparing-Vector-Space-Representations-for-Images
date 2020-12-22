@@ -50,7 +50,11 @@ void write_output(const std::string &, const uint16_t , const size_t , \
                         const std::string &);
 
 
-void write_search_output();
+void write_search_output(const std::string &, const size_t, \
+                            const std::vector<std::vector<std::pair<uint32_t, size_t>>> &, \
+                            const std::vector<std::pair<uint32_t, size_t>> &, \
+                            const std::vector<std::pair<uint32_t, size_t>> &, \
+                            const std::vector<std::chrono::microseconds> &);
 
 
 template <typename T>
