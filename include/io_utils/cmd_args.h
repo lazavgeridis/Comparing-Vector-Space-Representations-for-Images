@@ -8,6 +8,17 @@
 #include <chrono>
 
 
+typedef struct search_cmd_args {
+    int k;
+    int L;
+    std::string input_file_initial;
+    std::string input_file_reduced;
+    std::string query_file_initial;
+    std::string query_file_reduced;
+    std::string output_file;
+} search_cmd_args;
+
+
 class Prog_args // abstract class
 {
     private:

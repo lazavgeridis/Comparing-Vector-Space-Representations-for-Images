@@ -15,7 +15,7 @@ void lsh_usage(const char *exec) {
                         "[+] -d [input_file]\n"
                         "[+] -q [query_file]\n"
                         "[+] -k [hash_functions_number]\n"
-                        "[+] -L hash_tables_number\n"
+                        "[+] -L [hash_tables_number]\n"
                         "[+] -o [output_file]\n"
                         "[+] -N [nearest_neighbors_number]\n"
                         "[+] -R [radius]\n"
@@ -37,6 +37,20 @@ void cube_usage(const char *exec) {
                         "[+] -R [radius]\n"
                         "\nProvide all the above arguments\n",exec); 
 
+    exit(EXIT_FAILURE);
+}
+
+
+void search_usage(const char *exec) {
+    fprintf(stderr, "\nUsage: %s \n"
+                        "[+] -d [input_file_original_space]\n"
+                        "[+] -i [input_file_reduced_space]\n"
+                        "[+] -q [query_file_original_space]\n"
+                        "[+] -s [query_file_reduced_space]\n"
+                        "[+] -k [hash_functions_number]\n"
+                        "[+] -L [hash_tables_number]\n"
+                        "[+] -o [output_file]\n"
+                        "\nProvide all the above arguments\n", exec);
     exit(EXIT_FAILURE);
 }
 
@@ -86,6 +100,79 @@ size_t user_prompt_query_index(const std::string &message, long lower, long uppe
     }
 
     return index;
+}
+
+
+void search_parse_args(int argc, char *const argv[], search_cmd_args *args) {
+    
+    int opt{};
+
+    while ( (opt = getopt(argc, argv, "d:i:q:s:k:L:o:")) != -1 ) {
+        switch (opt) {
+            case 'd':
+                if ( !file_exists(optarg) ) {
+                    std::cerr << "\n[+]Error: Dataset (original space) file does not exist!\n" << std::endl;
+                    exit(EXIT_FAILURE);
+                }
+                args->input_file_initial = optarg;
+                break;
+                        
+            case 'i':
+                if ( !file_exists(optarg) ) {
+                    std::cerr << "\n[+]Error: Dataset (reduced space) file does not exist!\n" << std::endl;
+                    exit(EXIT_FAILURE);
+                }
+                args->input_file_reduced = optarg; 
+                break;
+            
+            case 'q':
+                if ( !file_exists(optarg) ) {
+                    std::cerr << "\n[+]Error: Query (original space) file does not exist!\n" << std::endl;
+                    exit(EXIT_FAILURE);
+                }
+                args->query_file_initial = optarg;
+                break;
+                        
+            case 's':
+                if ( !file_exists(optarg) ) {
+                    std::cerr << "\n[+]Error: Query (reduced space) file does not exist!\n" << std::endl;
+                    exit(EXIT_FAILURE);
+                }
+                args->query_file_reduced = optarg; 
+                break;
+
+            case 'k':
+                if (atoi(optarg) < 1) {
+                    std::cerr << "\n[+]Error: -k must be >= 1\n" << std::endl;
+                    exit(EXIT_FAILURE);
+                }
+                args->k = atoi(optarg);
+                break;
+
+            case 'L':
+                if (atoi(optarg) < 1) {
+                    std::cerr << "\n[+]Error: -L must be >= 1\n" << std::endl;
+                    exit(EXIT_FAILURE);
+                }
+                args->L = atoi(optarg);
+                break;
+
+            case 'o':
+                // convention: if the output file does not exist, create one on the working directory
+                if( file_exists(optarg) ) 
+                    args->output_file = optarg;
+                else {
+                    std::ofstream out(optarg);
+                    args->output_file = optarg;
+                }
+                break;
+
+            default: 
+                // one or more of the "-x" options did not appear
+                search_usage(argv[0]);
+                break;
+        }
+    }
 }
 
 
