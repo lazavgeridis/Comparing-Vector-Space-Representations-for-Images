@@ -1,6 +1,6 @@
-SRCDIR := ../cpp/common
-HEADERDIR := ../../include
-OBJDIR := ../../obj
+SRCDIR := ../common
+HEADERDIR := ../../../include
+OBJDIR := ../../../obj
 
 CC := g++
 CFLAGS := -std=c++11 -Ofast -g3 -Wall -Wextra -I$(HEADERDIR)

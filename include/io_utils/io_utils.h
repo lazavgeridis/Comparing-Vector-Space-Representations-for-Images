@@ -20,15 +20,11 @@ void lsh_parse_args(int, char * const [], Lsh_args **);
 
 void cube_parse_args(int, char * const [], Cube_args **);
 
-void emd_parse_args(int, char * const [], Prj3_args **);
-
 void search_parse_args(int, char * const [], search_cmd_args *);
 
 void lsh_usage(const char *);
 
 void cube_usage(const char *);
-
-void emd_usage(const char *);
 
 void search_usage(const char *);
 

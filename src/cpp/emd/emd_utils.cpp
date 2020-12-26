@@ -1,8 +1,8 @@
 #include <iostream>
 #include <unistd.h>
 
-#include "../../include/io_utils/cmd_args.h"
-#include "../../include/io_utils/io_utils.h"
+#include "../../../include/io_utils/cmd_args.h"
+#include "../../../include/io_utils/io_utils.h"
 
 
 void emd_usage(const char *exec) {
