@@ -317,6 +317,9 @@ void emd_parse_args(int argc, char * const argv[], Prj3_args **args) {
 }
 
 
+/* return the number of nns that have 
+ * label = query label
+ */
 uint8_t evaluate(uint8_t query_label, std::vector<uint8_t> &train_labels, std::vector<std::pair<double, size_t>> &nns) {
     uint8_t count = 0;
     for(size_t i = 0; i < nns.size(); ++i) {
@@ -329,8 +332,10 @@ uint8_t evaluate(uint8_t query_label, std::vector<uint8_t> &train_labels, std::v
 
 
 void earth_movers(Prj3_args *args) {
-    std::vector<std::vector<uint8_t>> train_samples, query_samples;
-    std::vector<uint8_t> train_labels, query_labels;
+    std::vector<std::vector<uint8_t>> train_samples;
+    std::vector<std::vector<uint8_t>> query_samples;
+    std::vector<uint8_t> train_labels;
+    std::vector<uint8_t> query_labels;
 
     /* load the 2 datasets (trainset, testset) and their labels respectively */
     std::cout << "\nReading training set from \"" << args->get_trainset_original_path() << "\"..." <<  std::endl;
