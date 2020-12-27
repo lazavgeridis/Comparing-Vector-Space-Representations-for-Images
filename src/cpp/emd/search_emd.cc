@@ -82,7 +82,7 @@ void emd(std::vector<std::vector<T>> &train_samples, std::vector<T> &query, std:
     //std::cout << "Each image has dimension " << dimension << "x" << dimension << std::endl;
     
     /* each cluster has 4x4 pixels or 7x7 pixels */
-    const uint8_t pixels = 7;
+    const uint8_t pixels = 7; // should be faster
     
     /* each image consists of (dimension / pixels) x (dimension / pixels) clusters 
      * i.e 7x7 clusters or 4x4 clusters 
@@ -90,19 +90,19 @@ void emd(std::vector<std::vector<T>> &train_samples, std::vector<T> &query, std:
     const uint8_t  clusters = dimension / pixels;
     const uint16_t n = clusters * clusters;
     
-    //std::cout << "In this case we have " << n << " clusters with " << pixels * pixels << " pixels each" << std::endl;
+    std::cout << "In this case we have " << n << " clusters with " << pixels * pixels << " pixels each" << std::endl;
 
     uint32_t dist;
+    double infinity;
     size_t query_offset, query_index, p_offset, p_index;
     std::vector<T> qcluster, pcluster;
-    std::vector<uint32_t> distances;
     std::vector<double> q_cluster_weight(n, 0.0);
     std::vector<double> p_cluster_weight(n, 0.0);
-    std::vector<MPVariable*> flows;
     std::vector<MPConstraint *> row_constraints(n, 0);
     std::vector<MPConstraint *> column_constraints(n, 0);
+    std::vector<uint32_t> distances;
+    std::vector<MPVariable*> flows;
     T center1, center2;
-
     const size_t size = train_samples.size();
 
     init_k_nearest(nns);
@@ -110,10 +110,12 @@ void emd(std::vector<std::vector<T>> &train_samples, std::vector<T> &query, std:
     for (size_t i = 0; i != size; ++i) {
 
         MPSolver* solver = MPSolver::CreateSolver("GLOP");
-        double infinity = solver->infinity();
+        infinity = solver->infinity();
 
         /* create a variable vector representing flows - n squared variables total */
         solver->MakeNumVarArray(n * n, 0.0, infinity, "flow", &flows);
+
+        const std::vector<T> &p = train_samples[i];
 
         for(size_t query_cluster_index = 0; query_cluster_index < n; ++query_cluster_index) {
             
@@ -136,8 +138,6 @@ void emd(std::vector<std::vector<T>> &train_samples, std::vector<T> &query, std:
 
             for(size_t p_cluster_index = 0; p_cluster_index < n; ++p_cluster_index) {
 
-                const std::vector<T> &p = train_samples[i];
-
                 p_offset = (p_cluster_index / clusters) * dimension * pixels;
                 p_offset += (p_cluster_index % clusters) * pixels;
 
@@ -155,8 +155,10 @@ void emd(std::vector<std::vector<T>> &train_samples, std::vector<T> &query, std:
 
                 /* Calculate distance between query_cluster_index (i) and p_cluster_index (j) */
                 dist = euclidean(center1, center2);
+
                 //std::cout << query_cluster_index << "-" << p_cluster_index \
                 //    << " Distance: " << dist << std::endl;
+                
                 distances.push_back(dist);
 
                 pcluster.clear();
@@ -165,28 +167,18 @@ void emd(std::vector<std::vector<T>> &train_samples, std::vector<T> &query, std:
 
         }
 
-        /* test */
-        //std::cout << "Q clusters' weights:" << std::endl;
-        //for(auto w : q_cluster_weight)
-        //    std::cout << w << std::endl;
-
-        //std::cout << "P clusters' weights:" << std::endl;
-        //for(auto w : p_cluster_weight)
-        //    std::cout << w << std::endl;
-        /* test ends here */
-
         /* define "row" constraints */
-        for(size_t i = 0; i < n; ++i) {
+        for (size_t i = 0; i != n; ++i) {
             row_constraints[i] = solver->MakeRowConstraint(q_cluster_weight[i], q_cluster_weight[i]);
-            for(size_t j = 0; j < n; ++j) {
+            for(size_t j = 0; j != n; ++j) {
                 row_constraints[i]->SetCoefficient(flows[i * n + j], 1);
             }
         }
 
         /* define "column" constraints */
-        for(size_t j = 0; j < n; ++j) {
+        for (size_t j = 0; j != n; ++j) {
             column_constraints[j] = solver->MakeRowConstraint(p_cluster_weight[j], p_cluster_weight[j]);
-            for(size_t i = 0; i < n; ++i) {
+            for(size_t i = 0; i != n; ++i) {
                 column_constraints[j]->SetCoefficient(flows[i * n + j], 1);
             }
         }
@@ -215,9 +207,11 @@ void emd(std::vector<std::vector<T>> &train_samples, std::vector<T> &query, std:
                                                  { return (left.first > right.first); } );
         }
         
-        flows.clear();
         distances.clear();
+        flows.clear();
 
+        delete solver;
+        //std::cout << "Solver deallocated" << std::endl;
     }
 
     std::sort(nns.begin(), nns.end(), [](const std::pair<double, size_t> &left, \
@@ -317,17 +311,14 @@ void emd_parse_args(int argc, char * const argv[], Prj3_args **args) {
 }
 
 
-/* return the number of nns that have 
- * label = query label
- */
-uint8_t evaluate(uint8_t query_label, std::vector<uint8_t> &train_labels, std::vector<std::pair<double, size_t>> &nns) {
+double evaluate(uint8_t query_label, std::vector<uint8_t> &train_labels, std::vector<std::pair<double, size_t>> &nns) {
     uint8_t count = 0;
     for(size_t i = 0; i < nns.size(); ++i) {
         if (query_label == train_labels[nns[i].second]) 
             ++count;
     }
 
-    return count;
+    return count / (double)nns.size();
 }
 
 
@@ -363,19 +354,22 @@ void earth_movers(Prj3_args *args) {
     std::cout << "Query labels has " << query_labels.size() << " labels" << std::endl;
 
     /* for each query sample, find its 10 nns using emd */
-    std::vector<std::pair<double, size_t>> nns;
     const size_t size = query_samples.size();
-    uint32_t sum = 0;
+    double sum = 0.0;
 
-    for(size_t i = 0; i < 1 /* size */; ++i) {
+    for(size_t i = 0; i < size; ++i) {
+
+        std::vector<std::pair<double, size_t>> nns;
         operations_research::emd<uint8_t>(train_samples, query_samples[i], nns);
-        std::cout << "Query's label: " << +query_labels[i] << std::endl;
+        //std::cout << "Query's label: " << +query_labels[i] << std::endl;
+
         //for (auto pair : nns)
         //    std::cout << "Distance: " << pair.first \
         //              << "    Index: " << pair.second \
         //              << "    Label: " << +train_labels[pair.second] << std::endl;
 
         sum += evaluate(query_labels[i], train_labels, nns);
+
         //std::cout << "Correct labels for query " << i << ": " << sum << std::endl;
         /* for each query compute:
          * percentage = # same label neighbors / 10
