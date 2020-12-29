@@ -24,6 +24,16 @@ static void start_search_simulation(search_cmd_args *args) {
     std::cout << "Done!" << std::endl;
 
 
+    for (int i = 0; i != dataset_reduced.size(); ++i) {
+        for (int j = 0; j != dataset_reduced[i].size(); ++j) {
+            if (dataset_reduced[i][j] > 65535) {
+                std::cout << dataset_reduced[i][j] << std::endl;
+            }
+        }
+    }
+
+    exit(EXIT_SUCCESS);
+
     std::cout << "\nComputing mean nearest neighbor distance..." << std::endl;
     double r = mean_nn_distance<uint8_t> (dataset_initial); 
     std::cout << "Done!" << std::endl;
