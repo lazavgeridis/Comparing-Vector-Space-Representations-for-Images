@@ -13,8 +13,6 @@
 #include <cmath>    /* for ceil(), abs() */
 #include <cassert>
 
-#include "../modules/lsh/lsh.h"
-#include "../modules/hypercube/hypercube.h"
 #include "../modules/exact_nn/exact_nn.h"
 #include "../cluster/cluster_utils.h"
 
@@ -51,48 +49,18 @@ class Cluster {
         /* silhouette for overall clustering */
         double stotal = 0.0;
 
-        /* for the 2 different reverse assignment methods */
-        LSH<T>                            *lshptr;
-        Hypercube<T>                      *cubeptr;
-
 
     public:
 
         /* Constructor if method = Lloyds Assignment */
-        Cluster(size_t nclusters): num_clusters(nclusters), lshptr(nullptr), cubeptr(nullptr)
+        Cluster(size_t nclusters): num_clusters(nclusters)
         {
             clusters.resize(num_clusters);
             avg_sk.resize(num_clusters, 0.0);
         }
 
 
-        /* Constructor if method = LSH Reverse Assignment */
-        Cluster(size_t nclusters, uint16_t L, uint16_t N, uint32_t K, double meandist, const std::vector<std::vector<T>> &train_set) : \
-                num_clusters(nclusters), cubeptr(nullptr)
-        {
-            clusters.resize(num_clusters);
-            avg_sk.resize(num_clusters, 0.0);
-            lshptr = new LSH<T> (L, N, K, meandist, train_set);
-        }
-
-
-        /* Constructor if method = Hypercube Reverse Assignment */
-        Cluster(size_t nclusters, uint32_t cube_dims, uint16_t M, uint16_t probes, \
-                uint16_t N, float R, size_t train_size, uint32_t data_dims, double mean_nn_dist, \
-                const std::vector<std::vector<T>> &train_set) : \
-                num_clusters(nclusters), lshptr(nullptr)
-        {
-            clusters.resize(num_clusters);
-            avg_sk.resize(num_clusters, 0.0);
-            cubeptr = new Hypercube<T> (cube_dims, M, probes, N, R, train_size, data_dims, mean_nn_dist, train_set);
-        }
-
-
-        ~Cluster()
-        {
-            if (lshptr  != nullptr) delete lshptr;
-            if (cubeptr != nullptr) delete cubeptr;
-        }
+        ~Cluster() = default;
 
 
         void init_plus_plus(const std::vector<std::vector<T>> &train_set, std::vector<size_t> &centroid_indexes)
@@ -242,12 +210,6 @@ class Cluster {
                 /* for each centroid c, range/ball queries centered at c */
                 for (ssize_t i = 0; i != n_centroids; ++i) {
         
-                    if (cubeptr == nullptr) {
-                        range_search_nns = lshptr->approximate_range_search(CLSH, radius, centroids[i]);
-                    }
-                    else {
-                        range_search_nns = cubeptr->range_search(centroids[i], train_set, radius);
-                    }
                     for (const auto &vector_index: range_search_nns) {
         
                         /* If vector_index is one of the k-centers, it cannot be assigned to another center */
@@ -356,12 +318,6 @@ class Cluster {
                 /* for each centroid c, range/ball queries centered at c */
                 for (ssize_t i = 0; i != n_centroids; ++i) {
         
-                    if (cubeptr == nullptr) {
-                        range_search_nns = lshptr->approximate_range_search(CLSH, radius, centroids[i]);
-                    }
-                    else {
-                        range_search_nns = cubeptr->range_search(centroids[i], train_set, radius);
-                    }
                     for (const auto &vector_index: range_search_nns) {
         
                         /* The case where the vector is not assigned to a cluster */

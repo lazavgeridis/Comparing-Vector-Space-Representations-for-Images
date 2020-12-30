@@ -7,21 +7,16 @@
 
 
 typedef struct cluster_args {
-    std::string input_file;
+    std::string input_file_original;
+    std::string input_file_new;
+    std::string nn_clusters_file;
     std::string config_file;
     std::string output_file;
-    std::string method;
-    bool complete;
 } cluster_args;
 
 
 typedef struct cluster_configs {
     int number_of_clusters;
-    int number_of_hash_tables;
-    int number_of_hash_functions;
-    int max_number_M_hypercube;    
-    int hypercube_dimensions;    
-    int number_of_probes;      
 } cluster_configs;
 
 
