@@ -52,33 +52,33 @@ static void start_search_simulation(search_cmd_args *args) {
 
 
     /* Exact NN calculation in reduced space */
-    start = std::chrono::high_resolution_clock::now();
     for (size_t i = 0; i != queryset_reduced.size(); ++i) {
+        start = std::chrono::high_resolution_clock::now();
         enn_reduced_distances[i] = search_exact_nn<uint16_t> (dataset_reduced, queryset_reduced[i]);
+        stop = std::chrono::high_resolution_clock::now();
+        auto dur = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+        search_times[0] += dur;
     }
-    stop = std::chrono::high_resolution_clock::now();
-    auto dur = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-    search_times[0] = dur;
 
 
     /* Approximate K-NN calculation */
-    start = std::chrono::high_resolution_clock::now();
     for (size_t i = 0; i != queryset_initial.size(); ++i) {
+        start = std::chrono::high_resolution_clock::now();
         ann_results[i] = lsh.approximate_k_nn(queryset_initial[i]);
+        stop = std::chrono::high_resolution_clock::now();
+        auto dur = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+        search_times[1] += dur;
     }
-    stop = std::chrono::high_resolution_clock::now();
-    dur = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-    search_times[1] = dur;
 
 
     /* Exact NN calculation */
-    start = std::chrono::high_resolution_clock::now();
     for (size_t i = 0; i != queryset_initial.size(); ++i) {
+        start = std::chrono::high_resolution_clock::now();
         enn_distances[i] = search_exact_nn<uint8_t> (dataset_initial, queryset_initial[i]);
+        stop = std::chrono::high_resolution_clock::now();
+        auto dur = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+        search_times[2] += dur;
     }
-    stop = std::chrono::high_resolution_clock::now();
-    dur = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-    search_times[2] = dur;
     
 
     std::cout << "\nWriting formatted output to \"" << args->output_file << "\"..."<< std::endl;

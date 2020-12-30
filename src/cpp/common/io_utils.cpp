@@ -488,6 +488,9 @@ void write_search_output(const std::string &output, const size_t size, \
     std::ofstream ofile;
     ofile.open(output, std::ios::out | std::ios::trunc);
 
+    double lsh_approx_factor{};
+    double reduced_approx_factor{};
+
     for (size_t i = 0; i != size; ++i) {
         ofile << "Query: " << i << std::endl;
        
@@ -498,12 +501,17 @@ void write_search_output(const std::string &output, const size_t size, \
         ofile << "distanceReduced: " << exact_dists_reduced[i].first << std::endl;
         ofile << "distanceLSH: " << ann_dists[i][0].first << std::endl;
         ofile << "distanceTrue: " << exact_dists[i].first << std::endl;
+
+        reduced_approx_factor += exact_dists_reduced[i].first / exact_dists[i].first;
+        lsh_approx_factor += ann_dists[i][0].first / exact_dists[i].first;
     }  
 
-    ofile << "\n\ntReduced: " << (double) times[0].count() << std::endl;
-    ofile << "tLSH: " << (double) times[1].count() << std::endl;
-    ofile << "tTrue: " << (double) times[2].count() << std::endl;
-    ofile << std::endl;
+    ofile << "\n\ntReduced: " << (double) times[0].count() / (double) size << std::endl;
+    ofile << "tLSH: " << (double) times[1].count() / (double) size << std::endl;
+    ofile << "tTrue: " << (double) times[2].count() / (double) size << std::endl;
+    std::cout << std::endl;
+    ofile << "Approximation Factor LSH: " << lsh_approx_factor / (double)size << std::endl;
+    ofile << "Approximation Factor Reduced: " << reduced_approx_factor / (double)size << std::endl;    ofile << std::endl;
 
     ofile.close();
 

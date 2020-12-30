@@ -22,7 +22,7 @@ def write_output_data(dataset_output, dataset_pixels):
     # normalize pixel values from 0 to 25500
     for i in range(len(dataset_pixels)):
         img = dataset_pixels[i]
-        dataset_pixels[i] = ((img - img.min()) * (1 / (img.max() - img.min()) * 25500)).astype('uint16')
+        dataset_pixels[i] = ((img - img.min()) * (1 / (img.max() - img.min()) * 65535)).astype('uint16')
         
     magicn = 3301
     with open('../../output_files/'+dataset_output, 'wb') as f:
