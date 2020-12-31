@@ -200,3 +200,16 @@ def visualize_predictions(test_images, test_labels, size, x_dim, y_dim, pred_lab
         imgfalse = test_images[false[i]].reshape(x_dim, y_dim)
         plt.imshow(imgfalse, cmap='gray')
         plt.show()
+
+
+def write_predicted(predicted_labels):
+    clusters = []
+
+    with open('../../output_files/nn_clusters', 'w') as f:
+        for label in range(10):
+            clusters.append([index for index in range(len(predicted_labels)) if predicted_labels[index] == label])
+            f.write("CLUSTER-{} {{size: {}, ".format(label + 1, len(clusters[-1])))
+            indices = clusters[-1]
+            for i in indices[ : -1]:
+                f.write(str(i) + ", ")
+            f.write(str(indices[-1]) + "}\n")

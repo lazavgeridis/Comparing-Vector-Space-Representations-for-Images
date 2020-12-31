@@ -26,6 +26,10 @@ void parse_cluster_args(int , char * const *, cluster_args *);
 
 void parse_cluster_configurations(std::string, cluster_configs *);
 
+void read_nn_clusters_file(const std::string &, std::vector<std::vector<size_t>> &);
+
+void load_data(cluster_args, std::vector<std::vector<uint8_t>> &, std::vector<std::vector<uint16_t>> &, std::vector<std::vector<size_t>> &); 
+
 void normalize_distances(std::vector<float> &);
 
 size_t binary_search(const std::vector<std::pair<float, size_t>> &, float);

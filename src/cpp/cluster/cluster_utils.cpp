@@ -1,9 +1,11 @@
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <utility>
+#include <stdio.h>
+#include <string.h>
 #include <unistd.h>
 #include <getopt.h>
-#include <fstream>
 
 #include "../../../include/io_utils/io_utils.h"
 #include "../../../include/cluster/cluster_utils.h"
@@ -100,8 +102,52 @@ void parse_cluster_configurations(std::string config_file, cluster_configs *conf
 }
 
 
-size_t binary_search(const std::vector<std::pair<float, size_t>> &partial_sums, float val)
-{
+void read_nn_clusters_file(const std::string &path, std::vector<std::vector<size_t>> &nn_clusters) {
+     std::ifstream f;
+     f.open(path);
+    
+     if (f) {
+         const std::string delim = ", ";
+         std::string line, token;
+         size_t pos = 0;
+         for (size_t i = 0; std::getline(f, line); ++i) {
+             while ( ( pos = line.find(delim) ) != std::string::npos ) {
+                 token = line.substr(0, pos);
+                 line.erase(0, pos + delim.length());
+                 if(token[0] == 'C') continue;
+                 nn_clusters[i].push_back(std::strtoull(token.c_str(), nullptr, 10));
+             }
+             pos = line.find("}");
+             token = line.substr(0, pos);
+             nn_clusters[i].push_back(std::strtoull(token.c_str(), nullptr, 10));
+         }
+         f.close();
+     }
+     else {
+         std::cerr << "Could not open nn clusters file!" << std::endl;
+         exit(EXIT_FAILURE);
+     }
+}
+
+
+void load_data(cluster_args args, std::vector<std::vector<uint8_t>> &dataset_original, std::vector<std::vector<uint16_t>> &dataset_new, \
+                std::vector<std::vector<size_t>> &nn_clusters) {
+
+      std::cout << "\nReading input dataset (original vector space) from \"" << args.input_file_original << "\" ..." << std::endl;
+      read_dataset<uint8_t> (args.input_file_original, dataset_original);
+      std::cout << "Done!" << std::endl;
+   
+      std::cout << "\nReading input dataset (new vector space) from \"" << args.input_file_new << "\" ..." << std::endl;
+      read_dataset<uint16_t> (args.input_file_new, dataset_new);
+      std::cout << "Done!" << std::endl;
+   
+      std::cout << "\nReading predicted nn clusters from \"" << args.nn_clusters_file << "\" ..." << std::endl;
+      read_nn_clusters_file(args.nn_clusters_file, nn_clusters);
+      std::cout << "Done!" << std::endl;
+}
+
+
+size_t binary_search(const std::vector<std::pair<float, size_t>> &partial_sums, float val) {
 
     size_t middle = 0, begin = 0, end = partial_sums.size();
     const std::pair<float, size_t> *less_than = &partial_sums[0];
@@ -131,8 +177,7 @@ size_t binary_search(const std::vector<std::pair<float, size_t>> &partial_sums, 
 }
 
 
-float find_max(const std::vector<float> &min_distances)
-{
+float find_max(const std::vector<float> &min_distances) {
     float max_dist = std::numeric_limits<float>::min();
 
     for (float dist : min_distances) {
@@ -143,8 +188,7 @@ float find_max(const std::vector<float> &min_distances)
 }
 
 
-void normalize_distances(std::vector<float> &min_distances)
-{
+void normalize_distances(std::vector<float> &min_distances) {
     float dmax = find_max(min_distances);
 
     for (float &d : min_distances)
@@ -152,8 +196,7 @@ void normalize_distances(std::vector<float> &min_distances)
 }
 
 
-bool in(const std::vector<size_t> &centroid_indexes, size_t index)
-{
+bool in(const std::vector<size_t> &centroid_indexes, size_t index) {
     for (size_t j = 0; j != centroid_indexes.size(); ++j) {
         if (centroid_indexes[j] == index)
             return true;
@@ -163,7 +206,6 @@ bool in(const std::vector<size_t> &centroid_indexes, size_t index)
 }
 
 
-bool compare(const std::pair<float, size_t> &p1, const std::pair<float, size_t> &p2) 
-{
+bool compare(const std::pair<float, size_t> &p1, const std::pair<float, size_t> &p2) {
     return p1.first < p2.first;
 }
