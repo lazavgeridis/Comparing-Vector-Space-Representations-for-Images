@@ -52,10 +52,11 @@ def main():
                 1. Repeat the training process with different number of: nodes in fully-connected layer or epochs or batch size
                 2. Plot accuracy and loss graphs with respect to the hyperparameters and print evaluation scores (precision, recall, f1)
                 3. Visualize model's predictions
+                4. Write predicted classes for training set to output file
                 """)
         
         option = int(input("> Enter the corresponding number: "))
-        if option < 1 or option > 3:
+        if option < 1 or option > 4:
             die("\nInvalid option!\n", -2)
         if option != 1:
             break
@@ -67,7 +68,7 @@ def main():
 
 
     # visualize predictions
-    else:
+    elif option == 3:
         # display trained models first 
         show_models(models)
         model_ind = int(input("\n> Enter the number corresponding to the model you want to visualize label predictions for: "))
@@ -78,7 +79,13 @@ def main():
 
         # visualize some mnist images with their predicted labels
         visualize_predictions(testset, testlabels, testset_size, x_dim, y_dim, predictions[model_ind])
-        
 
+    else:
+        # assume user has trained only one cnn model        
+        m, _, _, _, _, _ = models[-1]
+        pred, _, _ = m.test(trainset, trainlabels, trainset.shape[0])
+        write_predicted(pred)
+
+        
 if __name__ == '__main__':
     main()
