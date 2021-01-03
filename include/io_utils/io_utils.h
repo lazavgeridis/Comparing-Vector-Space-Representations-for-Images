@@ -18,17 +18,11 @@ bool file_exists(const char *);
 
 void lsh_parse_args(int, char * const [], Lsh_args **);
 
-void cube_parse_args(int, char * const [], Cube_args **);
-
 void search_parse_args(int, char * const [], search_cmd_args *);
 
 void lsh_usage(const char *);
 
-void cube_usage(const char *);
-
 void search_usage(const char *);
-
-void user_interface(Cube_args **);
 
 void user_interface(Lsh_args **);
 

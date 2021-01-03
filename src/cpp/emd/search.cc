@@ -194,7 +194,7 @@ void emd(std::vector<std::vector<T>> &train_samples, std::vector<T> &query, std:
     const uint16_t dimension = (uint16_t) sqrt( (double) dimension_squared );
     
     /* each cluster has 4x4 pixels or 7x7 pixels */
-    const uint8_t pixels = 7;
+    const uint8_t pixels = 4;//const uint8_t pixels = 7;   
     const std::pair<uint8_t, uint8_t> center_crds = {pixels / 2, pixels / 2};
     
     /* each image consists of (dimension / pixels) x (dimension / pixels) clusters 
