@@ -62,22 +62,6 @@ class Lsh_args: public Prog_args
 };
 
 
-class Cube_args: public Prog_args
-{
-    private:
-        const uint32_t projection_dim = 0; // d' is specified as the -k option in the command line
-        const uint16_t max_candidates = 0; // M
-        const uint16_t max_probes = 0;    // probes
-
-    public:
-        Cube_args(const std::string &, const std::string &, const std::string &, uint16_t, float, uint32_t, uint16_t, uint16_t);
-        Cube_args(const std::string &, const std::string &, const std::string &);
-        uint32_t get_k() const;
-        uint16_t get_max_candidates() const;
-        uint16_t get_max_probes() const;
-};
-
-
 class Prj3_args
 {
     private:
@@ -182,37 +166,6 @@ inline uint16_t Lsh_args::get_hash_tables_num() const
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-inline Cube_args::Cube_args(const std::string &ipath, const std::string &qpath, const std::string &opath, uint16_t nn_num, float rad, \
-                            uint32_t proj, uint16_t max_cands, uint16_t max_probes) : \
-        Prog_args(ipath, qpath, opath, nn_num, rad), projection_dim(proj), max_candidates(max_cands), max_probes(max_probes)  
-{}
-
-
-inline Cube_args::Cube_args(const std::string &ipath, const std::string &qpath, const std::string &opath) : \
-        Prog_args(ipath, qpath, opath, 1, 10000.0), projection_dim(14), max_candidates(10), max_probes(2)
-{}
-
-
-inline uint32_t Cube_args::get_k() const
-{
-    return projection_dim;
-}
-
-
-inline uint16_t Cube_args::get_max_candidates() const
-{
-    return max_candidates;
-}
-
-
-inline uint16_t Cube_args::get_max_probes() const
-{
-    return max_probes;
-}
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 inline Prj3_args::Prj3_args(const std::string &train_file, const std::string &query_file, \
                             const std::string &train_labels, const std::string &query_labels, \

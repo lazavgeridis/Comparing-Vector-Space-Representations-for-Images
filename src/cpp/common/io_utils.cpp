@@ -25,22 +25,6 @@ void lsh_usage(const char *exec) {
 }
 
 
-void cube_usage(const char *exec) {
-    fprintf(stderr, "\nUsage: %s \n"
-                        "[+] -d [input_file]\n"
-                        "[+] -q [query_file]\n"
-                        "[+] -k [projection_dimension]\n"
-                        "[+] -M [max_candidates]\n"
-                        "[+] -probes [max_probes]\n"
-                        "[+] -o [output_file]\n"
-                        "[+] -N [nearest_neighbors_number]\n"
-                        "[+] -R [radius]\n"
-                        "\nProvide all the above arguments\n",exec); 
-
-    exit(EXIT_FAILURE);
-}
-
-
 void search_usage(const char *exec) {
     fprintf(stderr, "\nUsage: %s \n"
                         "[+] -d [input_file_original_space]\n"
@@ -249,99 +233,6 @@ void lsh_parse_args(int argc, char * const argv[], Lsh_args **args) {
     *args = new Lsh_args(dataset_file, query_file, output_file, nn_num, rad, hfunc_num, htabl_num); 
 }
 
-
-void cube_parse_args(int argc, char * const argv[], Cube_args **args) {
-    int opt = 0, projection_dimension = 0, max_candidates = 0, max_probes = 0, nn_num = 0;
-    float rad = 0.0;
-    std::string dataset_file, query_file, output_file;
-
-    while ( (opt = getopt(argc, argv, "d:q:k:M:p:o:N:R:")) != -1 ) {
-        switch (opt) {
-            case 'd':
-                if ( !file_exists(optarg) ) {
-                    std::cerr << "\n[+]Error: Input file does not exist!\n" << std::endl;
-                    exit(EXIT_FAILURE);
-                }
-                dataset_file = optarg;
-                break;
-                        
-            case 'q':
-                if ( !file_exists(optarg) ) {
-                    std::cerr << "\n[+]Error: Query file does not exist!\n" << std::endl;
-                    exit(EXIT_FAILURE);
-                }
-                query_file = optarg; 
-                break;
-
-            case 'k':
-                projection_dimension = atoi(optarg);
-                if (projection_dimension < 1) {
-                    std::cerr << "\n[+]Error: -k must be >= 1\n" << std::endl;
-                    exit(EXIT_FAILURE);
-                }
-                break;
-
-            case 'M':
-                max_candidates = atoi(optarg);
-                if (max_candidates < 1) {
-                    std::cerr << "\n[+]Error: -M must be >= 1\n" << std::endl;
-                    exit(EXIT_FAILURE);
-                }
-                break;
-
-            case 'p':
-                max_probes = atoi(argv[optind]);
-                if (max_probes < 1) {
-                    std::cerr << "\n[+]Error: -probes must be >= 1\n" << std::endl;
-                    exit(EXIT_FAILURE);
-                }
-                break;
-
-            case 'o':
-                // convention: if the output file does not exist, create one on the working directory
-                if( file_exists(optarg) ) 
-                    output_file = optarg;
-                else {
-                    std::ofstream out(optarg);
-                    output_file = optarg;
-                }
-                break;
-
-            case 'N':
-                nn_num = atoi(optarg);
-                if (nn_num < 1) {
-                    std::cerr << "\n[+]Error: -N must be >= 1\n" << std::endl;
-                    exit(EXIT_FAILURE);
-                }
-                break;
-
-            case 'R':
-                rad = atof(optarg);
-                break;
-
-            default: 
-                // one or more of the "-x" options did not appear
-                cube_usage(argv[0]);
-                break;
-        }
-    }
-
-    *args = new Cube_args(dataset_file, query_file, output_file, nn_num, rad, projection_dimension, max_candidates, max_probes); 
-}
-
-
-void user_interface(Cube_args **args) {
-
-    std::string input_file, query_file, output_file; 
-
-    if (*args == nullptr) {
-        input_file = user_prompt_file("Enter path to input file: ");
-        query_file = user_prompt_file("Enter path to query file: ");
-        output_file = user_prompt_file("Enter path to output file: ");
-
-        *args = new Cube_args(input_file, query_file, output_file);
-    }
-}
 
 void user_interface(Lsh_args **args) {
 
