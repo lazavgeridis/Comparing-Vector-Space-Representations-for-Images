@@ -10,7 +10,7 @@ representations for the MNIST dataset, and evaluate how they perform on nearest 
 
 We used a (mirrored) CNN autoencoder architecture which includes a bottleneck layer in the middle. After training the model, we "feed" each image
 to the network as input, we take the output of this bottleneck layer and use it as a new vector representation for this image. In our case, this 
-bottleneck layer produces 10 output values so the above procedure can be expressed more formally as a mapping: 784d space --> 10d space:
+bottleneck layer produces 10 output values so the above procedure can be expressed more formally as a mapping:  **784d space -> 10d space** :
 
 ![Screenshot](images/ae_reduce.png)
 
