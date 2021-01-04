@@ -17,6 +17,9 @@ bottleneck layer produces 10 output values so the above procedure can be express
 ## NN Search 
 
 ### Approximate NN (784d) vs Exact NN (784d) vs Exact NN (10d) 
+We have already conducted a similar experiment in Project 1 and we knew that using LSH for Approximate NN Search was already performing
+very well (~1 approximation ratio and a lot faster than Exact NN search) . This time, we added Exact NN Search in the reduced vector space to 
+our comparisons. Its approximation factor is higher as expected (~3), but the search time is halved compared to LSH. 
 
 
 ### Exact k-NN (784d) : Manhattan vs Earth Mover's Distance
@@ -26,7 +29,7 @@ between 2 images up to this point. For each image in the query set, its 10 nns a
 are used here in order to measure the accuracy of each approach. It turned out that for MNIST, manhattan distance is both more accurate 
 and substantially faster.  
 To compute the earth mover's distance between 2 images, we had to minimize an objective function with respect to some constraints. For this
-purpose, [google or-tools] (https://developers.google.com/optimization) was used.
+purpose, [google or-tools](https://developers.google.com/optimization) was used.
 
 
 ## Clustering in the 2 Vector Spaces
