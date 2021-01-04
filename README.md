@@ -1,24 +1,27 @@
 
 # Introduction
 
-This is the 3rd and final project of Software Development for Algorithmic Problems. Part 1 and 2 can be found here and here respectively.  
-In this project, we compare 2 different vector space representations for the MNIST dataset, and evaluate how they perform on nearest neighbor
-search, clustering, and classification. 
+This is the 3rd and final project of Software Development for Algorithmic Problems. In this project, we compare 2 different vector space 
+representations for the MNIST dataset, and evaluate how they perform on nearest neighbor search and clustering. 
 
 
 # Description
 
-### Extracting Latent Space Representations
+### Reducing Data Dimensionality
 
-We start off by loading a pretrained autoencoder model (Part 2), and basically converting each image (28x28 pixels) to a 10D latent space 
-representation, as show below:
+We used a (mirrored) CNN autoencoder architecture which includes a bottleneck layer in the middle. After training the model, we "feed" each image
+to the network as input, we take the output of this bottleneck layer and use it as a new vector representation for this image. In our case, this 
+bottleneck layer produces 10 output values so the above procedure can be expressed more formally as a mapping: 784d space --> 10d space:
 
 ![Screenshot](images/ae_reduce.png)
 
-### NN Search in the 2 Vector Spaces
+### NN Search 
+
+## Approximate NN (784d) vs Exact NN (784d) vs Exact NN (10d) 
 
 
-### Earth Mover's Distance
+## Exact NN (784d) : Manhattan vs Earth Mover's Distance
+
 
 
 ### Clustering in the 2 Vector Spaces
