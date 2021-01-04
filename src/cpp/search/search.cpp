@@ -9,7 +9,6 @@
 #include "../../../include/io_utils/io_utils.h"
 #include "../../../include/modules/lsh/lsh.h"
 #include "../../../include/modules/exact_nn/exact_nn.h"
-#include "../../../include/metric/metric.h"
 
 
 static void start_search_simulation(search_cmd_args *args) {
