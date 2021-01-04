@@ -402,7 +402,8 @@ void write_search_output(const std::string &output, const size_t size, \
     ofile << "tTrue: " << (double) times[2].count() / (double) size << std::endl;
     std::cout << std::endl;
     ofile << "Approximation Factor LSH: " << lsh_approx_factor / (double)size << std::endl;
-    ofile << "Approximation Factor Reduced: " << reduced_approx_factor / (double)size << std::endl;    ofile << std::endl;
+    ofile << "Approximation Factor Reduced: " << reduced_approx_factor / (double)size << std::endl;    
+    ofile << std::endl;
 
     ofile.close();
 

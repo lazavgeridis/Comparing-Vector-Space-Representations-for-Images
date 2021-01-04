@@ -5,6 +5,7 @@
 #include <sys/time.h>
 
 
+#include "../../../include/metric/metric.h"
 #include "../../../include/io_utils/io_utils.h"
 #include "../../../include/modules/lsh/lsh.h"
 #include "../../../include/modules/exact_nn/exact_nn.h"
@@ -53,10 +54,12 @@ static void start_search_simulation(search_cmd_args *args) {
 
 
     /* Exact NN calculation in reduced space */
+    // uint32_t reduced_approx_factor{};
     for (size_t i = 0; i != queryset_reduced.size(); ++i) {
         start = std::chrono::high_resolution_clock::now();
         enn_reduced_distances[i] = search_exact_nn<uint16_t> (dataset_reduced, queryset_reduced[i]);
         stop = std::chrono::high_resolution_clock::now();
+        // reduced_approx_factor += manhattan_distance_rd<uint8_t> (queryset_initial[i], dataset_initial[enn_reduced_distances[i].second]);
         auto dur = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
         //enn_reduced_distances[i].first = manhattan_distance_rd<uint8_t> (queryset_initial[i], dataset_initial[enn_reduced_distances[i].second]);
         search_times[0] += dur;
