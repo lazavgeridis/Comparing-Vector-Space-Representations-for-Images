@@ -43,9 +43,16 @@ class Autoencoder():
 
 
     def encoder(self, input_img):
-        conv = layers.Conv2D(32, kernel_size=3, padding='same', strides=(2, 2), activation='relu')(input_img)
-        conv = layers.Conv2D(64, kernel_size=3, padding='same', strides=(2, 2), activation='relu')(conv)
-        conv = layers.Conv2D(128, kernel_size=3, padding='valid', strides=(2, 2), activation='relu')(conv)
+        conv = layers.Conv2D(32, kernel_size=3, padding='same', activation='relu')(input_img)
+        conv = layers.BatchNormalization()(conv)
+        conv = layers.MaxPool2D(pool_size=(2, 2), padding = 'same')(conv)
+        conv = layers.Conv2D(64, kernel_size=3, padding='same', activation='relu')(conv)
+        conv = layers.BatchNormalization()(conv)
+        conv = layers.MaxPool2D(pool_size=(2, 2), padding= 'same')(conv)
+        conv = layers.Conv2D(128, kernel_size=3, padding='same', activation='relu')(conv)
+        conv = layers.BatchNormalization()(conv)
+        conv = layers.Conv2D(256, kernel_size=(3, 3), padding='same', activation='relu')(conv)
+        conv = layers.BatchNormalization()(conv)
         
         self.shape_before_flattening = K.int_shape(conv)
 
@@ -58,9 +65,16 @@ class Autoencoder():
     def decoder(self, decoder_input):
         conv = layers.Dense(np.prod(self.shape_before_flattening[1:]), activation='relu')(decoder_input)
         conv = layers.Reshape(self.shape_before_flattening[1:])(conv)
-        conv = layers.Conv2DTranspose(128, kernel_size=3, padding='valid', strides=(2, 2), activation='relu')(conv)
-        conv = layers.Conv2DTranspose(64, kernel_size=3, padding='same', strides=(2, 2), activation='relu')(conv)
-        conv = layers.Conv2DTranspose(32, kernel_size=3, padding='same', strides=(2, 2), activation='relu')(conv)
+        conv = layers.Conv2DTranspose(256, kernel_size=(3, 3), padding='same', activation='relu')(conv)
+        conv = layers.BatchNormalization()(conv)
+        conv = layers.Conv2DTranspose(128, kernel_size=3, padding='same', activation='relu')(conv)
+        conv = layers.BatchNormalization()(conv)
+        conv = layers.Conv2DTranspose(64, kernel_size=3, padding='same', activation='relu')(conv)
+        conv = layers.BatchNormalization()(conv)
+        conv = layers.UpSampling2D(size=(2, 2))(conv)
+        conv = layers.Conv2DTranspose(32, kernel_size=3, padding='same', activation='relu')(conv)
+        conv = layers.BatchNormalization()(conv)
+        conv = layers.UpSampling2D(size=(2, 2))(conv)
         
         return layers.Conv2D(1, kernel_size=3, padding='same', activation='sigmoid')(conv)
 
