@@ -193,12 +193,15 @@ void emd(std::vector<std::vector<T>> &train_samples, std::vector<T> &query, std:
     const uint32_t dimension_squared = query.size();
     const uint16_t dimension = (uint16_t) sqrt( (double) dimension_squared );
     
-    /* each cluster has 4x4 pixels or 7x7 pixels */
-    const uint8_t pixels = 4;//const uint8_t pixels = 7;   
+    /* each cluster has 4x4 pixels or 7x7 pixels 
+     * 4x4 clusters with 7x7 pixels each is faster!
+     * 7x7 clusters with 4x4 pixels each takes a lot of time!
+     */
+    const uint8_t pixels = 7;//const uint8_t pixels = 4;   
     const std::pair<uint8_t, uint8_t> center_crds = {pixels / 2, pixels / 2};
     
     /* each image consists of (dimension / pixels) x (dimension / pixels) clusters 
-     * i.e 7x7 clusters or 4x4 clusters 
+     * in practise: 7x7 clusters or 4x4 clusters 
      */
     const uint8_t  clusters = dimension / pixels;
     const uint16_t n = clusters * clusters;
@@ -388,7 +391,7 @@ void nn_search(Prj3_args *args) {
      * a. earh mover's distance
      * b. manhattan distance
      */
-    const size_t size = query_samples.size() / 500; 
+    const size_t size = query_samples.size(); // query_samples.size() / 500;  -->  20 queries
     double emd_sum = 0.0, manhattan_sum = 0.0, emd_dur = 0.0, manhattan_dur = 0.0;
 
     for(size_t i = 0; i != size; ++i) {

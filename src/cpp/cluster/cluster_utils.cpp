@@ -29,7 +29,7 @@ void parse_cluster_args(int argc, char * const argv[], cluster_args *args) {
     int opt;
     std::string input_original, input_new, nn_clusters, config, output;
 
-    while ((opt = getopt(argc, argv, "d:i:n:c:o")) != -1) {
+    while ((opt = getopt(argc, argv, "d:i:n:c:o:")) != -1) {
         switch(opt) {
             case 'd':
                 if ( !file_exists(optarg) ) {
