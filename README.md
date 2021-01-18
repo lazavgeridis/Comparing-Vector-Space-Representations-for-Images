@@ -14,12 +14,14 @@ bottleneck layer produces 10 output values so the above procedure can be express
 
 ![Screenshot](images/ae_reduce.png)
 
+(**update**: producing 20 output values instead of 10 in the bottleneck layer seems to be working better)
+
 ## NN Search 
 
 ### Approximate NN (784d) vs Exact NN (784d) vs Exact NN (10d) 
 We have already conducted a similar experiment in Project 1 and we knew that using LSH for Approximate NN Search was already performing
 very well (~1 approximation ratio and a lot faster than Exact NN search) . This time, we added Exact NN Search in the reduced vector space to 
-our comparisons. Its approximation factor is higher as expected (~3), but the search time is halved compared to LSH. 
+our comparisons. Its approximation factor is higher as expected (~1.9), but the search time is almost halved compared to LSH. 
 
 
 ### Exact k-NN (784d) : Manhattan vs Earth Mover's Distance
