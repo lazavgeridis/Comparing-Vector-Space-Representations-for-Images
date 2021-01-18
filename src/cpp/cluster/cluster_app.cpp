@@ -10,8 +10,8 @@
 #include "../../../include/cluster/cluster.h"
 
 
-static void compare_clusterings(cluster_args args, std::vector<std::vector<uint16_t>> &dataset_new, \
-                                std::vector<std::vector<uint8_t>> &dataset_original, Cluster<uint16_t> *new_space, \
+static void compare_clusterings(cluster_args args, const std::vector<std::vector<uint16_t>> &dataset_new, \
+                                const std::vector<std::vector<uint8_t>> &dataset_original, Cluster<uint16_t> *new_space, \
                                 Cluster<uint8_t> *orig_space, Cluster<uint8_t> *nn) {
 
     /***** K-medians++ for new vector space data (10d) *****/

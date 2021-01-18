@@ -184,7 +184,7 @@ double cluster_weight(uint32_t image_weight, const std::vector<T> &cluster) {
 namespace operations_research {
 
 template<typename T>
-void emd(std::vector<std::vector<T>> &train_samples, std::vector<T> &query, std::vector<std::pair<double, size_t>> &nns) {
+void emd(const std::vector<std::vector<T>> &train_samples, const std::vector<T> &query, std::vector<std::pair<double, size_t>> &nns) {
 
     /* make sure the dimensionality of the training set is equal to that of the query set */
     assert(train_samples[0].size() == query.size());
@@ -324,7 +324,7 @@ void emd(std::vector<std::vector<T>> &train_samples, std::vector<T> &query, std:
 
 
 template<typename T>
-void manhattan(std::vector<std::vector<T>> &train_samples, std::vector<T> &query, std::vector<std::pair<uint32_t, size_t>> &nns) {
+void manhattan(const std::vector<std::vector<T>> &train_samples, const std::vector<T> &query, std::vector<std::pair<uint32_t, size_t>> &nns) {
 
     const size_t size = train_samples.size();
     uint32_t dist;
