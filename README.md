@@ -14,6 +14,12 @@ bottleneck layer produces 10 output values so the above procedure can be express
 
 ![Screenshot](images/ae_reduce.png)
 
+Therefore, with the completion of part 1 the new (latent space) representations
+for the MNIST training and test sets will be stored in the 2 output files
+specified by the user in the command line. These 2 files are located in 
+[output_files/output_dataset_file](output_files/output_dataset_file) and 
+[output_files/output_query_file](output_files/output_query_file) respectively.
+
 (**update**: producing 20 output values instead of 10 in the bottleneck layer seems to be working better)
 
 ## Part 2 : NN Search 
@@ -48,14 +54,14 @@ observed that number (1) produced the worst results, which is something we expec
 
 # Execution
 For part 1, the program to execute is _reduce.py_. After navigating to
-src/python you can execute the program as:  
+[src/python](src/python) you can execute the program as:  
 ```
 $ python3 reduce.py -dataset ../../datasets/train-images-idx3-ubyte 
                     --queryset ../../datasets/t10k-images-idx3-ubyte
                     -od <output_dataset_file>
                     -oq <output_query_file>
 ```  
-For part 2A, you need to first navigate to the src/cpp/search directory and
+For part 2A, you need to first navigate to the [src/cpp/search](src/cpp/search) directory and
 then execute the following commands (compilation and execution are 2 separate
 steps since this is a C++ source code file):  
 ```
@@ -68,3 +74,10 @@ $ ./search -d ../../../datasets/train-images-idx3-ubyte
            -L 5
            -o output
 ```
+To delete the generated object files, output file and the executable file
+simply run  
+```
+$ make clean
+```  
+
+
