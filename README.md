@@ -14,7 +14,7 @@ bottleneck layer produces 10 output values so the above procedure can be express
 
 ![Screenshot](images/ae_reduce.png)
 
-Therefore, with the completion of part 1 the new (latent space) representations
+With the completion of part 1 the new (latent space) representations
 for the MNIST training and test sets will be stored in the 2 output files
 specified by the user in the command line. These 2 files are located in 
 [output_files/output_dataset_file](output_files/output_dataset_file) and 
@@ -37,7 +37,8 @@ between 2 images up to this point. For each image in the query set, its 10 nns a
 are used here in order to measure the accuracy of each approach. It turned out that for MNIST, manhattan distance is both more accurate 
 and substantially faster.  
 To compute the earth mover's distance between 2 images, we had to minimize an objective function with respect to some constraints. For this
-purpose, [google or-tools](https://developers.google.com/optimization) was used.
+purpose, [google or-tools](https://developers.google.com/optimization) was used. To download OR-Tools for C++ refer to the official installation 
+[page](https://developers.google.com/optimization/install/cpp).
 
 
 ## Part 3 : Clustering in the 2 Vector Spaces
@@ -53,7 +54,7 @@ observed that number (1) produced the worst results, which is something we expec
 
 
 # Execution
-For part 1, the program to execute is _reduce.py_. After navigating to
+For **part 1**, the program to execute is _reduce.py_. After navigating to
 [src/python](src/python) you can execute the program as:  
 ```
 $ python3 reduce.py -dataset ../../datasets/train-images-idx3-ubyte 
@@ -61,7 +62,7 @@ $ python3 reduce.py -dataset ../../datasets/train-images-idx3-ubyte
                     -od <output_dataset_file>
                     -oq <output_query_file>
 ```  
-For part 2A, you need to first navigate to the [src/cpp/search](src/cpp/search) directory and
+For **part 2A**, you need to first navigate to the [src/cpp/search](src/cpp/search) directory and
 then execute the following commands (compilation and execution are 2 separate
 steps since this is a C++ source code file):  
 ```
@@ -79,5 +80,22 @@ simply run
 ```
 $ make clean
 ```  
-
+To run **part 2B**, first make sure you have installed Google OR-Tools for C++ (see
+above). Then, navigate to the directory where you installed or-tools (under this directory
+you should also see the Makefile as well as examples/, include/, lib/ objs/, etc) and run:
+```
+$ make DEBUG='-Ofast' build
+SOURCE=relative/path/to/Comparing_Vector_Space_Representations_for_Images/src/cpp/emd/search.cc
+``` 
+The generated executable file is located by default in the bin/ directory, so
+to execute, run the following:
+```
+$ cd ./bin  
+$ ./search -d relative/path/to/Comparing_Vector_Space_Representations_for_Images/datasets/train-images-idx3-ubyte
+           -q relative/path/to/Comparing_Vector_Space_Representations_for_Images/datasets/t10k-images-idx3-ubyte
+           -l1 relative/path/to/Comparing_Vector_Space_Representations_for_Images/datasets/train-labels-idx1-ubyte
+           -l2 relative/path/to/Comparing_Vector_Space_Representations_for_Images/datasets/t10k-labels-idx1-ubyte
+           -o relative/path/to/Comparing_Vector_Space_Representations_for_Images/output_files/emd_results
+           -EMD
+```
 
