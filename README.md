@@ -1,12 +1,12 @@
 # Introduction
 
 This is the 3rd and final project of Software Development for Algorithmic Problems. In this project, we compare 2 different vector space 
-representations for the MNIST dataset, and evaluate how they perform on nearest neighbor search and clustering. 
+representations for the MNIST image dataset, and evaluate how they perform on nearest neighbor search and clustering.
 
 
 # Description
 
-## Reducing Data Dimensionality
+## Part 1 : Reducing Data Dimensionality
 
 We used a (mirrored) CNN autoencoder architecture which includes a bottleneck layer in the middle. After training the model, we "feed" each image
 to the network as input, we take the output of this bottleneck layer and use it as a new vector representation for this image. In our case, this 
@@ -16,15 +16,15 @@ bottleneck layer produces 10 output values so the above procedure can be express
 
 (**update**: producing 20 output values instead of 10 in the bottleneck layer seems to be working better)
 
-## NN Search 
+## Part 2 : NN Search 
 
-### Approximate NN (784d) vs Exact NN (784d) vs Exact NN (10d) 
+### 2A : Approximate NN (784d) vs Exact NN (784d) vs Exact NN (10d) 
 We have already conducted a similar experiment in Project 1 and we knew that using LSH for Approximate NN Search was already performing
 very well (~1 approximation ratio and a lot faster than Exact NN search) . This time, we added Exact NN Search in the reduced vector space to 
 our comparisons. Its approximation factor is higher as expected (~1.9), but the search time is almost halved compared to LSH. 
 
 
-### Exact k-NN (784d) : Manhattan vs Earth Mover's Distance
+### 2B : Exact k-NN (784d) : Manhattan vs Earth Mover's Distance
 
 In this section, we implemented earth mover's distance and compared it to manhattan distance, our default metric for measuring similarity 
 between 2 images up to this point. For each image in the query set, its 10 nns are found using both metrics. The files containing labels 
@@ -34,7 +34,7 @@ To compute the earth mover's distance between 2 images, we had to minimize an ob
 purpose, [google or-tools](https://developers.google.com/optimization) was used.
 
 
-## Clustering in the 2 Vector Spaces
+## Part 3 : Clustering in the 2 Vector Spaces
 
 In this section, we compared 3 different clustering procedures:  
 1. clustering in 10d vector space + computing silhouette and objective function in 784d vector space
@@ -44,3 +44,27 @@ In this section, we compared 3 different clustering procedures:
 The evaluation of each procedure (silhouette and objective) had to be made in the original vector space for our comparisons to make sense. We 
 observed that number (1) produced the worst results, which is something we expected because of the reduced dimensionality of the data. Procedures
 (2) and (3) performed similarly but (2) achieved slightly higher silhouette score and lower clustering objective value.
+
+
+# Execution
+For part 1, the program to execute is _reduce.py_. After navigating to
+src/python you can execute the program as:  
+```
+$ python3 reduce.py -dataset ../../datasets/train-images-idx3-ubyte 
+                    --queryset ../../datasets/t10k-images-idx3-ubyte
+                    -od <output_dataset_file>
+                    -oq <output_query_file>
+```  
+For part 2A, you need to first navigate to the src/cpp/search directory and
+then execute the following commands (compilation and execution are 2 separate
+steps since this is a C++ source code file):  
+```
+$ make  
+$ ./search -d ../../../datasets/train-images-idx3-ubyte 
+           -i ../../../output_files/output_dataset_file
+           -q ../../../datasets/t10k-images-idx3-ubyte
+           -s ../../../output_files/output_query_file
+           -k 4
+           -L 5
+           -o output
+```
