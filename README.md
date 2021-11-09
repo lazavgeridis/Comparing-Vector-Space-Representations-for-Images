@@ -63,8 +63,7 @@ $ python3 reduce.py --dataset ../../datasets/train-images-idx3-ubyte
                     -oq <output_query_file>
 ```  
 For **part 2A**, you need to first navigate to the [src/cpp/search](src/cpp/search) directory and
-then execute the following commands (compilation and execution are 2 separate
-steps since this is a C++ source code file):  
+then execute the following commands:  
 ```
 $ make  
 $ ./search -d ../../../datasets/train-images-idx3-ubyte 
@@ -87,7 +86,7 @@ you should also see the `Makefile` as well as the directories `examples`, `inclu
 $ make DEBUG='-Ofast' build
 SOURCE=relative/path/to/Comparing_Vector_Space_Representations_for_Images/src/cpp/emd/search.cc
 ``` 
-The generated executable file is located by default in the bin/ directory, so
+The generated executable file is located by default in the `bin` directory, so
 to execute, run the following:
 ```
 $ cd ./bin  
@@ -95,7 +94,15 @@ $ ./search -d relative/path/to/Comparing_Vector_Space_Representations_for_Images
            -q relative/path/to/Comparing_Vector_Space_Representations_for_Images/datasets/t10k-images-idx3-ubyte
            -l1 relative/path/to/Comparing_Vector_Space_Representations_for_Images/datasets/train-labels-idx1-ubyte
            -l2 relative/path/to/Comparing_Vector_Space_Representations_for_Images/datasets/t10k-labels-idx1-ubyte
-           -o relative/path/to/Comparing_Vector_Space_Representations_for_Images/output_files/emd_results
+           -o relative/path/to/Comparing_Vector_Space_Representations_for_Images/output_files/{output_file_name}
            -EMD
 ```
-Lastly, 
+Lastly, to execute **part 3**, navigate to the [src/cpp/cluster](src/cpp/cluster) directory and run:
+```
+$ make
+$ ./cluster -d ../../../datasets/train-images-idx3-ubyte
+            -i ../../../output_files/output_dataset_file
+            -n ../../../output_files/nn_clusters
+            -c ../../../include/cluster/cluster.conf
+            -o ../../../output_files/{output_file_name}
+```
